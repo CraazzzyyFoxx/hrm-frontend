@@ -1,24 +1,21 @@
 "use client";
 
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import {AppBar, Box, Toolbar, IconButton, Container, Avatar, Button} from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import HeaderPopover from "@/components/HeaderPopover/HeaderPopover";
 import {useAuthStore} from "@/store/store";
 import {useRouter} from "next/navigation";
+import {FC} from "react";
 
-const pages = ['Мои резюме', 'Отклики', 'Помощь'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function ResponsiveAppBar() {
+interface AppBarProps {
+    isMain: boolean
+}
+
+const ResponsiveAppBar: FC<AppBarProps> = (props) => {
     const {isAuth} = useAuthStore()
     const { push } = useRouter();
 
@@ -33,30 +30,52 @@ function ResponsiveAppBar() {
         setAnchorElUser(null);
     };
 
-    // @ts-ignore
+    const isTransparent = props.isMain
+
     return (
-        <AppBar position="static">
+        <AppBar position="static" color={isTransparent ? "transparent": "primary"} elevation={Number(!isTransparent)}>
             <Container maxWidth="lg">
                 <Toolbar disableGutters>
-                    <Avatar alt="Remy Sharp" src="/static/savva.jpg" sx={{marginRight: "1em"}}/>
-
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }}}>
-                        {pages.map((page) => (
-                            <Button
-                                key={page}
-
-                                sx={{ my: 2, color: 'white', display: 'block', textTransform: "none"}}
-                            >
-                                {page}
-                            </Button>
-                        ))}
-                    </Box>
+                    <a href="/">
+                        <Avatar alt="SAVVA" src="/static/savva.jpg"  sx={{marginRight: "1em"}}/>
+                    </a>
+                    {
+                        isAuth ?
+                            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }}}>
+                                <Button
+                                    sx={{ my: 2, color: 'white', display: 'block'}}
+                                    onClick={() => {push('/resume')}}
+                                >
+                                    Мои резюме
+                                </Button>
+                                <Button
+                                    sx={{ my: 2, color: 'white', display: 'block'}}
+                                    onClick={() => {push('/vacancy')}}
+                                >
+                                    Отклики
+                                </Button>
+                                <Button
+                                    sx={{ my: 2, color: 'white', display: 'block'}}
+                                    onClick={() => {push('/help')}}
+                                >
+                                    Помощь
+                                </Button>
+                            </Box>
+                            :
+                            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }}}>
+                                <Button
+                                    sx={{ my: 2, color: 'white', display: 'block'}}
+                                    onClick={() => {push('/help')}}
+                                >
+                                    Помощь
+                                </Button>
+                            </Box>
+                    }
 
                     <Box sx={{ flexGrow: 0, display: "block"}}>
                         <Button
                             variant="outlined"
-                            color="success"
-                            sx={{marginRight: "1em", borderRadius: "20px", textTransform: "none"}}
+                            sx={{marginRight: "1em", borderRadius: "20px", color: "#2e7d32", borderColor: "#2e7d32"}}
                         >
                             Создать резюме
                         </Button>
@@ -84,8 +103,7 @@ function ResponsiveAppBar() {
                                 <>
                                     <Button
                                         variant="outlined"
-                                        color="success"
-                                        sx={{borderRadius: "20px", textTransform: "none"}}
+                                        sx={{borderRadius: "20px", color: "white", borderColor: "white"}}
                                         onClick={() => {push('/login')}}
                                     >
                                         Войти

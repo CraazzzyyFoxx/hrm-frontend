@@ -18,7 +18,19 @@ const theme = createTheme({
             main: '#20262b',
             dark: '#161a1e',
             contrastText: '#fff',
-        }
-}});
+        },
+    },
+    components: {
+        MuiButton: {
+            styleOverrides: {
+                root: ({ theme, ownerState }) => ({
+                    boxShadow: 'none',
+                    borderRadius: '10px',
+                    textTransform: 'none',
+                }),
+            },
+        },
+    }
+});
 
 export default theme;

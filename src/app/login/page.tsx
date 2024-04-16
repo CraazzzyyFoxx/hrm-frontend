@@ -1,49 +1,35 @@
 "use client";
 
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Header from "@/components/Header/Header";
 import {useAuthStore} from "@/store/store";
+import {useRouter} from "next/navigation";
+import Copyright from "@/components/Copyright/Copyright";
 
-function Copyright(props: any) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="/">
-                HRM
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
 
 
 export default function LoginPage() {
-    const [email, setEmail] = React.useState<string>('');
-    const [password, setPassword] = React.useState<string>('');
     const {login} = useAuthStore()
+    const { push } = useRouter();
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        login(data.get('email'), data.get('password'))
+        login(data.get('email') as string, data.get('password') as string)
+        push("/")
     };
 
     return (
         <>
-            <Header/>
+            <Header isMain={false}/>
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
@@ -67,7 +53,7 @@ export default function LoginPage() {
                                     label="Email Address"
                                     name="email"
                                     autoComplete="email"
-                                    onChange={(e) => setEmail(e.target.value)}
+
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -79,7 +65,7 @@ export default function LoginPage() {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
-                                    onChange={(e) => setPassword(e.target.value)}
+
                                 />
                             </Grid>
                         </Grid>
@@ -89,12 +75,12 @@ export default function LoginPage() {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Sign Up
+                            Войти
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="#" variant="body2">
-                                    Already have an account? Sign in
+                                <Link href="/registration" variant="body2">
+                                    Нет аккаунта? Зараегистрироваться
                                 </Link>
                             </Grid>
                         </Grid>

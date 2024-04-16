@@ -14,8 +14,10 @@ export default class AuthService {
         }, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
     }
 
-    static async registration(email: string, password: string, first_name: string, last_name: string): Promise<AxiosResponse<AuthResponse>> {
-        return $api.post<AuthResponse>('/auth/registration', {email, password, first_name, last_name})
+    static async registration(
+        email: string, password: string, first_name: string, last_name: string, phone_number: string
+    ): Promise<AxiosResponse> {
+        return $api.post('/auth/registration', {email, password, first_name, last_name, phone_number})
     }
 
     static async logout(): Promise<void> {

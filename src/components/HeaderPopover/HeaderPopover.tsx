@@ -2,6 +2,8 @@ import React, {FC} from 'react';
 import Link from "next/link";
 import {Divider, List, ListSubheader, Popover, ListItemButton} from "@mui/material";
 import {useAuthStore} from "@/store/store";
+import {useRouter} from "next/navigation";
+import Typography from "@mui/material/Typography";
 
 
 interface HeaderPopoverProps {
@@ -13,7 +15,8 @@ interface HeaderPopoverProps {
 
 
 const HeaderPopover: FC<HeaderPopoverProps> = (props) => {
-    const {user} = useAuthStore()
+    const {user, logout} = useAuthStore()
+    const { push } = useRouter();
 
     return (
         <Popover
@@ -32,18 +35,30 @@ const HeaderPopover: FC<HeaderPopoverProps> = (props) => {
         >
             <List
                 sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', borderRadius: 10}}
-                subheader={<ListSubheader>{user.first_name} {user.last_name}</ListSubheader>}
+                subheader={
+                <ListSubheader sx={{fontWeight: "800"}}>
+                    {user.first_name} {user.last_name}
+                </ListSubheader>
+            }
             >
                 <Divider/>
-                <Link href="/account" passHref>
-                    <ListItemButton>
-                        Настройки
-                    </ListItemButton>
-                </Link>
+                <ListItemButton onClick={() => {push("/account")}}>
+                    Настройки
+                </ListItemButton>
+                <ListItemButton>
+                    Рассылки
+                </ListItemButton>
                 <ListItemButton>
                     Скрытые мной вакансии и компании
                 </ListItemButton>
                 <ListItemButton>
+                    Изображения
+                </ListItemButton>
+                <ListItemButton>
+                    Подключенные услуги
+                </ListItemButton>
+                <Divider/>
+                <ListItemButton onClick={() => {logout()}}>
                     <div style={{color: "red"}}>Выйти</div>
                 </ListItemButton>
             </List>

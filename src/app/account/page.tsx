@@ -1,15 +1,17 @@
 "use client";
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import Header from "@/components/Header/Header";
 import {ToggleButton, ToggleButtonGroup, Container, Divider} from '@mui/material';
 import Typography from "@mui/material/Typography";
 import AccountMain from "@/components/AccountMain/AccountMain";
 import {useAuthStore} from "@/store/store";
+import {useRouter} from "next/navigation";
 
 const AccountPage = () => {
     const [alignment, setAlignment] = React.useState<string | null>('settings');
-    const {isAuth, user} = useAuthStore()
+    const {isAuth} = useAuthStore()
+    const { push } = useRouter();
 
     const handleAlignment = (
         event: React.MouseEvent<HTMLElement>,
@@ -18,12 +20,19 @@ const AccountPage = () => {
         setAlignment(newAlignment);
     };
 
+    useEffect(() => {
+            if (!isAuth) {
+                push("/login")
+            }
+        },
+        [])
+
     return (
         <div>
-            <Header/>
+            <Header isMain={false}/>
             <Container maxWidth="lg" sx={{marginTop: "3em"}}>
                 <Typography variant="h4" sx={{fontWeight: 600}}>
-                    Настройки
+                    Личный кабинет
                 </Typography>
                 <ToggleButtonGroup
                     value={alignment}
@@ -33,16 +42,16 @@ const AccountPage = () => {
                     sx={{marginTop: "1.5em", border: "none"}}
 
                     >
-                    <ToggleButton value="settings" aria-label="left aligned" sx={{textTransform: "capitalize", border: "none"}}>
+                    <ToggleButton value="settings" aria-label="left aligned" sx={{textTransform: "none", border: "none"}}>
                         Настройки
                     </ToggleButton>
-                    <ToggleButton value="undesirable" aria-label="centered" sx={{textTransform: "capitalize", border: "none"}}>
-                        Нежелательное
+                    <ToggleButton value="chat" aria-label="centered" sx={{textTransform: "none",border: "none"}}>
+                        Чат
                     </ToggleButton>
-                    <ToggleButton value="images" aria-label="right aligned" sx={{textTransform: "capitalize", border: "none"}}>
-                        Изображения
+                    <ToggleButton value="documents" aria-label="right aligned" sx={{textTransform: "none",border: "none"}}>
+                        Документы
                     </ToggleButton>
-                    <ToggleButton value="mails" aria-label="justified" sx={{textTransform: "capitalize", border: "none"}}>
+                    <ToggleButton value="mails" aria-label="justified" sx={{textTransform: "none",border: "none"}}>
                         Рассылки
                     </ToggleButton>
                 </ToggleButtonGroup>

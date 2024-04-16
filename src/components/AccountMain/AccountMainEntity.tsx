@@ -14,6 +14,7 @@ interface UserPopoverProps {
 
 const AccountMainEntity: FC<UserPopoverProps> = (props) => {
     return (
+
         <Grid xs={8}>
             <Box
                 sx={{
@@ -23,10 +24,15 @@ const AccountMainEntity: FC<UserPopoverProps> = (props) => {
                     display: "flex",
                     padding: "0.5em",
                 }}>
-                <Typography>
+                <Typography sx={{
+                    minWidth: "175px"
+                }}
+                >
                     {props.name}
                 </Typography>
-                <Typography>
+                <Typography sx={{
+                    minWidth: "300px"
+                }}>
                     {props.value}
                 </Typography>
                 <Button {...props}>Изменить</Button>
