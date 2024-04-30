@@ -6,7 +6,7 @@ import {useAuthStore} from "@/store/store";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import BootstrapInput from "@/components/BootstrapInput/BootstrapInput";
+import BootstrapInput from "@/components/ui/BootstrapInput/BootstrapInput";
 import Button from "@mui/material/Button";
 import TuneIcon from '@mui/icons-material/Tune';
 import VacancyTrend from "@/components/VacancyTrend/VacancyTrend";

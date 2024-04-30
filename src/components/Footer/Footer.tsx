@@ -11,12 +11,8 @@ import Typography from '@mui/material/Typography';
 import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
-import {Avatar} from "@mui/material";
+import {Avatar, Divider} from "@mui/material";
 
-const logoStyle = {
-    width: '140px',
-    height: 'auto',
-};
 
 function Copyright() {
     return (
@@ -30,6 +26,7 @@ function Copyright() {
 
 export default function Footer() {
     return (
+
         <Container
             sx={{
                 display: 'flex',
@@ -40,6 +37,7 @@ export default function Footer() {
                 textAlign: { sm: 'center', md: 'left' },
             }}
         >
+            <Divider/>
             <Box
                 sx={{
                     display: 'flex',
@@ -60,7 +58,7 @@ export default function Footer() {
                         <Box sx={{ ml: '-15px' }}>
                             <Avatar alt="SAVVA" src="/static/savva.jpg" sx={{marginLeft: "0.75em"}}/>
                         </Box>
-                        <Typography variant="body2" fontWeight={600} gutterBottom>
+                        <Typography variant="body2" fontWeight={600} gutterBottom sx={{marginTop: "15px"}}>
                             Новостная рассылка
                         </Typography>
                         <Typography variant="body2" color="text.secondary" mb={2}>
@@ -76,7 +74,7 @@ export default function Footer() {
                                 aria-label="Введите свой адрес электронной почты"
                                 placeholder="Введите свой адрес электронной почты"
                                 inputProps={{
-                                    autocomplete: 'off',
+                                    autoComplete: 'off',
                                     ariaLabel: 'Enter your email address',
                                 }}
                             />

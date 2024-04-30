@@ -12,7 +12,8 @@ import {useRouter} from "next/navigation";
 import VacancyCardList from "@/components/VacncyCardList/VacancyCardList";
 
 const ResumePage = () => {
-    const {user} = useAuthStore()
+    const {user, checkAuth, updateUser} = useAuthStore()
+    const { push } = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -20,6 +21,19 @@ const ResumePage = () => {
     };
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    useEffect(
+        () => {
+            checkAuth().then(r => r ? null : push("/login"))
+        },
+        []
+    )
+
+    const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        user.search_status = event.target.value;
+        updateUser(user);
+        handleClose()
     };
 
     return (
@@ -93,17 +107,16 @@ const ResumePage = () => {
                                         aria-labelledby="demo-radio-buttons-group-label"
                                         defaultValue={user.search_status}
                                         name="radio-buttons-group"
+                                        onChange={handleRadioChange}
                                     >
-                                        <FormControlLabel value="active" control={<Radio />} label="Активно ищу работу" />
-                                        <FormControlLabel value="considering" control={<Radio />} label="Рассматриваю предложения" />
-                                        <FormControlLabel value="offer_thinking" control={<Radio />} label="Предложили работу, пока думаю" />
-                                        <FormControlLabel value="going_new" control={<Radio />} label="Уже выхожу на новое место" />
-                                        <FormControlLabel value="not_looking" control={<Radio />} label="Не ищу работу" />
+                                        <FormControlLabel value="Активно ищу работу" control={<Radio />} label="Активно ищу работу" />
+                                        <FormControlLabel value="Рассматриваю предложения" control={<Radio />} label="Рассматриваю предложения" />
+                                        <FormControlLabel value="Предложили работу, пока думаю" control={<Radio />} label="Предложили работу, пока думаю" />
+                                        <FormControlLabel value="Уже выхожу на новое место" control={<Radio />} label="Уже выхожу на новое место" />
+                                        <FormControlLabel value="Не ищу работу" control={<Radio />} label="Не ищу работу" />
                                     </RadioGroup>
                                 </FormControl>
-                                <Box sx={{justifyContent: "right", display: "flex"}}>
-                                    <Button variant="contained" sx={{marginRight: "1.5em"}}>Сохранить</Button>
-                                </Box>
+
                             </Box>
                         </Menu>
                     </Box>

@@ -1,12 +1,15 @@
-import React from 'react';
+"use client";
+
+import React, {useEffect} from 'react';
 import {Box, } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import AccountMainEntity from "@/components/AccountMain/AccountMainEntity";
 import {useAuthStore} from "@/store/store";
 import {Modal} from "@mui/material";
 import Button from "@mui/material/Button";
-import BootstrapInput from "@/components/BootstrapInput/BootstrapInput";
+import BootstrapInput from "@/components/ui/BootstrapInput/BootstrapInput";
 import Typography from "@mui/material/Typography";
+import {useRouter} from "next/navigation";
 
 
 const style = {
@@ -23,10 +26,44 @@ const style = {
 
 
 const AccountMain = () => {
-    const {user} = useAuthStore()
+    const {user, updateUser, checkAuth, isAuth} = useAuthStore()
+    const { push } = useRouter();
     const [open, setOpen] = React.useState(false);
+    const [name, setName] = React.useState(user.first_name);
+    const [lastName, setLastName] = React.useState(user.last_name);
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        user.first_name = name;
+        user.last_name = lastName;
+        setOpen(false);
+        updateUser(user);
+    }
+
+    useEffect(
+        () => {
+            checkAuth()
+            if (!isAuth) {
+                push("/login")
+            }
+        },
+        []
+    )
+
+    useEffect(
+        () => {
+            setName(user.first_name)
+            setLastName(user.last_name)
+        },
+        [user.first_name, user.last_name]
+    )
+
+    const onChangeName = (e: any) => {
+        setName(e.target.value)
+    }
+
+    const onChangeLastName = (e: any) => {
+        setLastName(e.target.value)
+    }
 
     return (
         <div>
@@ -41,7 +78,7 @@ const AccountMain = () => {
             </Box>
             <Modal
                 open={open}
-                onClose={handleClose}
+                onClose={() => setOpen(false)}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -61,8 +98,8 @@ const AccountMain = () => {
                     alignItems: "center",
                 }}>
                     <Typography variant="h5">Изменить имя</Typography>
-                    <BootstrapInput type="text" placeholder="Имя" sx={{paddingTop: "1em"}}/>
-                    <BootstrapInput type="text" placeholder="Фамилия" sx={{padding: "1em"}}/>
+                    <BootstrapInput type="text" placeholder="Имя" sx={{paddingTop: "1em"}} value={name} onChange={onChangeName}/>
+                    <BootstrapInput type="text" placeholder="Фамилия" sx={{padding: "1em"}} value={lastName} onChange={onChangeLastName}/>
                     <Button variant="outlined" onClick={handleClose}>Сохранить</Button>
                 </Box>
             </Modal>

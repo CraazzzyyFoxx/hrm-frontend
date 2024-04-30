@@ -2,6 +2,7 @@ import {create} from 'zustand';
 import {User} from "@/models/User";
 import AuthService from "@/services/AuthService";
 import UserService from "@/services/UserService";
+import BelbinService from "@/services/BelbinService";
 
 
 export interface AuthStore {
@@ -11,13 +12,21 @@ export interface AuthStore {
     setUser: (user: User) => void;
     clear: () => void;
     login: (email: string, password: string) => void;
-    checkAuth: () => void;
+    checkAuth: () => Promise<boolean>;
     logout: () => void;
+    updateUser: (user: User) => void;
 }
 
 
-export interface BelbinStore {
+type Row = number[];
 
+
+export interface BelbinStore {
+    stages: Array<Row>;
+    current_stage: number;
+    inc_stage: () => void;
+    dec_stage: () => void;
+    set: (stage: number, row: number, value: number | number[]) => void;
 }
 
 
@@ -41,8 +50,9 @@ export const useAuthStore = create<AuthStore>((set) => ({
         try {
             const resp = await UserService.getMe()
             set({user: resp.data, isAuth: true})
+            return true
         } catch (e) {
-            console.log(e)
+            return false
         }
     },
     logout: async () => {
@@ -50,5 +60,30 @@ export const useAuthStore = create<AuthStore>((set) => ({
         await AuthService.logout()
         localStorage.removeItem('token')
     },
+    updateUser: async (user: User) => {
+        const resp = await UserService.updateMe(user)
+        set({user: resp.data})
+    },
+}));
 
+
+export const useBelbinStore = create<BelbinStore>((set) => ({
+    stages: [
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+    ],
+    current_stage: 0,
+    inc_stage: () => set((state => ({current_stage: state.current_stage + 1}))),
+    dec_stage: () => set((state => ({current_stage: state.current_stage - 1}))),
+    set: (stage: number, row: number, value: number) => {
+        set((state) => {
+            state.stages[stage][row] = value
+            return {stages: state.stages}
+        })
+    },
 }));

@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import AccountMain from "@/components/AccountMain/AccountMain";
 import {useAuthStore} from "@/store/store";
 import {useRouter} from "next/navigation";
+import BelbinTable from "@/components/BelbinTable/BelbinTable";
 
 const AccountPage = () => {
     const [alignment, setAlignment] = React.useState<string | null>('settings');
@@ -48,6 +49,9 @@ const AccountPage = () => {
                     <ToggleButton value="chat" aria-label="centered" sx={{textTransform: "none",border: "none"}}>
                         Чат
                     </ToggleButton>
+                    <ToggleButton value="belbin" aria-label="right aligned" sx={{textTransform: "none",border: "none"}}>
+                        Тест Белбина
+                    </ToggleButton>
                     <ToggleButton value="documents" aria-label="right aligned" sx={{textTransform: "none",border: "none"}}>
                         Документы
                     </ToggleButton>
@@ -60,15 +64,8 @@ const AccountPage = () => {
                     {alignment === 'settings' && (
                         <AccountMain/>
                     )}
-                    {alignment === 'undesirable' && (
-                        <div>
-                            <Typography variant="h5" sx={{fontWeight: 600, marginTop: "1.5em"}}>
-                                Нежелательное
-                            </Typography>
-                            <Typography variant="body1" sx={{marginTop: "1em"}}>
-                                Настройки нежелательного контента
-                            </Typography>
-                        </div>
+                    {alignment === 'belbin' && (
+                        <BelbinTable/>
                     )}
                     {alignment === 'images' && (
                         <div>
