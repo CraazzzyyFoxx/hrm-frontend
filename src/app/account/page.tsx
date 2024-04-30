@@ -8,6 +8,7 @@ import AccountMain from "@/components/AccountMain/AccountMain";
 import {useAuthStore} from "@/store/store";
 import {useRouter} from "next/navigation";
 import BelbinTable from "@/components/BelbinTable/BelbinTable";
+import Footer from "@/components/Footer/Footer";
 
 const AccountPage = () => {
     const [alignment, setAlignment] = React.useState<string | null>('settings');
@@ -89,6 +90,7 @@ const AccountPage = () => {
                     )}
                 </div>
             </Container>
+            <Footer/>
         </div>
     );
 };
