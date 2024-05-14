@@ -1,54 +1,32 @@
 "use client";
 
 import React, {useEffect} from 'react';
-import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import Container from "@mui/material/Container";
-import {useAuthStore, useBelbinStore} from "@/store/store";
+import {useBelbinStore} from "@/stores/belbin";
 import {useRouter} from "next/navigation";
-import {Avatar, Divider, linearProgressClasses} from "@mui/material";
+import {Avatar, Divider} from "@mui/material";
 import Message from "@/components/ui/Message/Message";
-import {styled} from "@mui/material/styles";
 import {questions} from "@/consts/belbin";
 import Slider from "@/components/ui/Slider/Slider";
 import Button from "@mui/material/Button";
+import ColorLinearProgress from "@/components/ui/ColorLinearProgress/ColorLinearProgress";
+import BelbinService from "@/services/BelbinService";
 
 
-const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-    height: 10,
-    borderRadius: 5,
-    [`&.${linearProgressClasses.colorPrimary}`]: {
-        backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
-    },
-    [`& .${linearProgressClasses.bar}`]: {
-        borderRadius: 5,
-        backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
-    },
-}));
-
-
-function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
-    return (
-        <Box sx={{ display: 'flex', alignItems: 'center', marginTop: "2em",}}>
-            <Box sx={{ width: '100%', mr: 1 }}>
-                <BorderLinearProgress variant="determinate" {...props} />
-            </Box>
-        </Box>
-    );
-}
 
 const BelbinPage = () => {
-    const {checkAuth} = useAuthStore();
     const { push } = useRouter();
-    const { stages, current_stage, inc_stage, set } = useBelbinStore();
-
+    const { stages, current_stage, inc_stage, set , create} = useBelbinStore();
 
     useEffect(
         () => {
             if (current_stage === 6) {
+                const topRoles = BelbinService.calculateBelbin(stages);
+                create(topRoles);
                 push("/belbin/result")
             }
         },
@@ -64,22 +42,10 @@ const BelbinPage = () => {
         return stages[stage][row]
     }
 
-
-    useEffect(
-        () => {
-            checkAuth().then(r => r ? null : push("/login"))
-        },
-        []
-    )
-
-    const increase = () => {
-        inc_stage()
-    }
-
     return (
         <div>
             <Header isMain={false}/>
-            <Container maxWidth={false} sx={{display: "flex", flexDirection: "row", marginRight: "-25px"}}>
+            <Container maxWidth={false} sx={{display: "flex", flexDirection: "row"}}>
                 <Container
                     maxWidth={false}
                     sx={{
@@ -127,16 +93,15 @@ const BelbinPage = () => {
                     sx={{
                         alignItems: "left",
                         width: "65%",
-                        height: "100vh",
-                        boxShadow: "-2px 0 24px #2a313752",
-                }}
+                        boxShadow: "-16px 0px 16px -10px #2a313752",
+                    }}
                 >
                     <Box
                         sx={{
                             width: "50%"
                         }}
                     >
-                        <LinearProgressWithLabel value={100 / 7 * (current_stage + 1)}/>
+                        <ColorLinearProgress value={100 / 7 * (current_stage + 1)}/>
                         <Box sx={{
                             display: "flex",
                             justifyContent: "center",
@@ -165,14 +130,22 @@ const BelbinPage = () => {
                                         valueLabelDisplay="auto"
                                         marks={marks}
                                         disabled={get(current_stage, index) + possibleMaximumValueQuestion === 0}
-                                        onChange={(e, value) => {set(current_stage, index, value);}}
+                                        onChange={(e, value) => { // @ts-ignore
+                                            set(current_stage, index, value)}}
                                     />
                                 </Box>
                             ))
                         }
                         <Box>
-                            <Divider sx={{marginTop: "2em"}}/>
-                            <Box sx={{display: "flex", justifyContent: "space-between", marginTop: "2em"}}>
+                            <Divider sx={{marginTop: "2em", marginLeft: "-24px"}}/>
+                            <Box sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                marginTop: "24px",
+                                marginBottom: "24px",
+                                flexDirection: "row"
+                            }}
+                            >
                                 <Box>
                                     <Typography variant="h6">Всего баллов: {sumValueQuestions}</Typography>
                                 </Box>
@@ -181,7 +154,7 @@ const BelbinPage = () => {
                                         ? <Box>
                                             <Button
                                                 variant="contained"
-                                                onClick={() => increase()}
+                                                onClick={() => inc_stage()}
                                             >
                                                 Далее
                                             </Button>
@@ -197,6 +170,7 @@ const BelbinPage = () => {
                     </Box>
                 </Container>
             </Container>
+            <Divider/>
             <Footer/>
         </div>
     );

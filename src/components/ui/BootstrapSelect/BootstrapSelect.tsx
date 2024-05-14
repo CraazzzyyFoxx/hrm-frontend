@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ResumeCreate = () => {
+const BootstrapSelect = () => {
     return (
         <div>
 
@@ -8,4 +8,4 @@ const ResumeCreate = () => {
     );
 };
 
-export default ResumeCreate;
+export default BootstrapSelect;

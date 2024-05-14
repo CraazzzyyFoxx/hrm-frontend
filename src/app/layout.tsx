@@ -8,6 +8,7 @@ import '@fontsource/roboto/700.css';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../theme';
+import {Providers} from "@/app/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,9 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
       <body className={inter.className}>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            {children}
+            <Providers>
+              {children}
+            </Providers>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

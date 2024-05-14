@@ -1,6 +1,6 @@
 import {keys, roles} from "@/consts/roles";
 import $api from "@/http";
-import {BelbinRole, BelbinRoleCreate} from "@/models/BelbinRole";
+import {BelbinRole, BelbinRoleCreate, BelbinRoleEntity} from "@/models/BelbinRole";
 
 export default class BelbinService {
     static calculateBelbin(questionsRate: { [x: number]: { [x: number]: any; }; }) {
@@ -54,29 +54,12 @@ export default class BelbinService {
         });
         return finalTopRoles;
     }
-    static topRoles(topRoles: BelbinRoleCreate[]) {
-        let mainValue: any;
-        for(let value in topRoles) {
-            if ( topRoles[value].name !== undefined && topRoles[value].points !== undefined && value !== undefined) {
-                mainValue = topRoles[value];
-                break;
-            }
-        }
-        let supportedValue: any;
-        if (mainValue !== undefined) {
-            for(let value in topRoles) {
-                if ( topRoles[value].name !== undefined && topRoles[value].points !== undefined && value !== undefined && topRoles[value].name !== mainValue.category) {
-                    supportedValue = topRoles[value];
-                    break;
-                }
-            }
-        }
-        let smallest : any;
-        for(let value in topRoles) {
-            if ( topRoles[value].name !== undefined && topRoles[value].points !== undefined && value !== undefined) {
-                smallest = topRoles[value];
-            }
-        }
+    static topRoles(topRoles: BelbinRoleEntity[]) {
+        const roles = topRoles.sort((a, b) => b.points - a.points);
+        const mainValue = roles[0];
+        const supportedValue = roles[1];
+        const smallest = roles[roles.length - 1];
+
         return {
             mainValue,
             supportedValue,
@@ -84,12 +67,12 @@ export default class BelbinService {
         }
     }
 
-    static async fetchBelbin() {
-        return $api.get<BelbinRole[]>('/belbin/')
+    static async fetch() {
+        return $api.get<BelbinRole>('/belbin')
     }
-    static async createBelbin(roles: BelbinRoleCreate[]) {
-        await $api.delete('/belbin/');
-        return $api.post<BelbinRole>('/belbin/', roles)
+    static async create(roles: BelbinRoleCreate[]) {
+        await $api.delete('/belbin');
+        return $api.post<BelbinRole>('/belbin', roles)
     }
 
 }

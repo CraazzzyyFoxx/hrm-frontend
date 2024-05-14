@@ -7,7 +7,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 interface UserPopoverProps {
     name: string
-    value: string
+    value: string | null
     onClick: () => any
 }
 
@@ -35,7 +35,7 @@ const AccountMainEntity: FC<UserPopoverProps> = (props) => {
                 }}>
                     {props.value}
                 </Typography>
-                <Button {...props}>Изменить</Button>
+                <Button onClick={props.onClick}>Изменить</Button>
             </Box>
             <Divider/>
         </Grid>

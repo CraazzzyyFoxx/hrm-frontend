@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -11,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
-import {Avatar, Divider} from "@mui/material";
+import {Avatar} from "@mui/material";
 
 
 function Copyright() {
@@ -32,18 +34,21 @@ export default function Footer() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: { xs: 4, sm: 8 },
-                py: { xs: 8, sm: 10 },
+                gap: { xs: 2, sm: 6 },
+                py: { xs: 6, sm: 8 },
                 textAlign: { sm: 'center', md: 'left' },
             }}
         >
-            <Divider/>
             <Box
                 sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', sm: 'row' },
                     width: '100%',
                     justifyContent: 'space-between',
+                    // gap: { xs: 2, sm: 2 },
+                    // py: { xs: 2, sm: 2 },
+                    // borderTop: '1px solid',
+                    // borderColor: 'divider',
                 }}
             >
                 <Box
@@ -75,7 +80,7 @@ export default function Footer() {
                                 placeholder="Введите свой адрес электронной почты"
                                 inputProps={{
                                     autoComplete: 'off',
-                                    ariaLabel: 'Enter your email address',
+                                    "aria-label": 'Enter your email address',
                                 }}
                             />
                             <Button variant="contained" color="primary" sx={{ flexShrink: 0 }}>

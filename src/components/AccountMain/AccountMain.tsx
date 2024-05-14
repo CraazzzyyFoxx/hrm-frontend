@@ -1,108 +1,104 @@
 "use client";
 
-import React, {useEffect} from 'react';
-import {Box, } from '@mui/material';
+import React from 'react';
+import {Box, Dialog, DialogActions, DialogContent, DialogTitle,} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import AccountMainEntity from "@/components/AccountMain/AccountMainEntity";
-import {useAuthStore} from "@/store/store";
-import {Modal} from "@mui/material";
+import {useAuthStore} from "@/stores/auth";
 import Button from "@mui/material/Button";
-import BootstrapInput from "@/components/ui/BootstrapInput/BootstrapInput";
-import Typography from "@mui/material/Typography";
-import {useRouter} from "next/navigation";
-
-
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
+import moment from "moment";
+import 'moment/locale/ru';
+import TextField from "@mui/material/TextField";
+import {useCheckAuth} from "@/hooks/checkAuth";
 
 
 const AccountMain = () => {
-    const {user, updateUser, checkAuth, isAuth} = useAuthStore()
-    const { push } = useRouter();
-    const [open, setOpen] = React.useState(false);
-    const [name, setName] = React.useState(user.first_name);
-    const [lastName, setLastName] = React.useState(user.last_name);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => {
-        user.first_name = name;
-        user.last_name = lastName;
-        setOpen(false);
-        updateUser(user);
-    }
-
-    useEffect(
-        () => {
-            checkAuth()
-            if (!isAuth) {
-                push("/login")
-            }
-        },
-        []
-    )
-
-    useEffect(
-        () => {
-            setName(user.first_name)
-            setLastName(user.last_name)
-        },
-        [user.first_name, user.last_name]
-    )
-
-    const onChangeName = (e: any) => {
-        setName(e.target.value)
-    }
-
-    const onChangeLastName = (e: any) => {
-        setLastName(e.target.value)
-    }
+    useCheckAuth()
+    const {user, updateUser, updatePassword} = useAuthStore()
+    const [openName, setOpenName] = React.useState(false);
+    const [openPassword, setOpenPassword] = React.useState(false);
+    const name = user.middle_name ? `${user.last_name} ${user.first_name} ${user.middle_name}` : `${user.first_name} ${user.last_name}`
 
     return (
         <div>
             <Box sx={{marginTop: "1.5em"}}>
                 <Grid container>
-                    <AccountMainEntity name="Имя" value={`${user.first_name} ${user.last_name}`} onClick={handleOpen}/>
-                    <AccountMainEntity name="Пароль" value="Обновлен 2 года назад" onClick={() => {console.log("Xui")}}/>
-                    <AccountMainEntity name="Почта" value={user.email} onClick={() => {console.log("Xui")}}/>
-                    <AccountMainEntity name="Мобильный телефон" value={user.phone_number} onClick={() => {console.log("Xui")}}/>
-                    <AccountMainEntity name="Район поиска работы" value="Москва" onClick={() => {console.log("Xui")}}/>
+                    <AccountMainEntity
+                        name="Имя"
+                        value={name}
+                        onClick={() => setOpenName(true)}
+                    />
+                    <AccountMainEntity
+                        name="Пароль"
+                        value={`Пароль обновлен ${moment(user.password_changed_at).locale("Russian").calendar().toLowerCase()}`}
+                        onClick={() => {setOpenPassword(true)}}
+                    />
+                    <AccountMainEntity
+                        name="Почта"
+                        value={user.email} onClick={() => {console.log("Xui")}}
+                    />
+                    <AccountMainEntity
+                        name="Мобильный телефон" value={user.phone_number}
+                        onClick={() => {console.log("Xui")}}
+                    />
+                    <AccountMainEntity
+                        name="Район поиска работы" value={user.search_region ? user.search_region : "Не указан"}
+                        onClick={() => {console.log("Xui")}}
+                    />
                 </Grid>
             </Box>
-            <Modal
-                open={open}
-                onClose={() => setOpen(false)}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+            <Dialog
+                open={openName}
+                onClose={() => setOpenName(false)}
+                PaperProps={{
+                    component: 'form',
+                    onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+                        event.preventDefault();
+                        const formData = new FormData(event.currentTarget);
+                        const formJson = Object.fromEntries((formData as any).entries());
+                        const name = formJson.name
+                        const lastName = formJson.lastName
+                        const middleName = formJson.middleName
+                        user.first_name = name
+                        user.last_name = lastName
+                        user.middle_name = middleName
+                        updateUser(user)
+                        setOpenName(false)
+                    },
+                }}
             >
-                <Box sx={{
-                    position: 'absolute' as 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 400,
-                    bgcolor: 'background.paper',
-                    border: '1px solid #000',
-                    borderRadius: "10px",
-                    boxShadow: 24,
-                    p: 4,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                }}>
-                    <Typography variant="h5">Изменить имя</Typography>
-                    <BootstrapInput type="text" placeholder="Имя" sx={{paddingTop: "1em"}} value={name} onChange={onChangeName}/>
-                    <BootstrapInput type="text" placeholder="Фамилия" sx={{padding: "1em"}} value={lastName} onChange={onChangeLastName}/>
-                    <Button variant="outlined" onClick={handleClose}>Сохранить</Button>
-                </Box>
-            </Modal>
+                <DialogContent>
+                    <DialogTitle id="modal-modal-title">Изменить имя</DialogTitle>
+                    <DialogActions sx={{display: "flex", flexDirection: "column", gap: "1em"}}>
+                        <TextField autoFocus required size="small" name="name" placeholder="Имя" defaultValue={user.first_name} sx={{marginLeft: "8px"}}/>
+                        <TextField autoFocus required size="small" name="lastName" placeholder="Фамилия" defaultValue={user.last_name}/>
+                        <TextField autoFocus size="small" type="text" name="middleName" placeholder="Отчество" defaultValue={user.middle_name}/>
+                        <Button variant="outlined" type="submit">Сохранить</Button>
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
+            <Dialog
+                open={openPassword}
+                onClose={() => setOpenPassword(false)}
+                PaperProps={{
+                    component: 'form',
+                    onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+                        event.preventDefault();
+                        const formData = new FormData(event.currentTarget);
+                        const formJson = Object.fromEntries((formData as any).entries());
+                        updatePassword(formJson.password)
+                        setOpenPassword(false)
+                    },
+                }}
+            >
+                <DialogContent>
+                    <DialogTitle id="modal-modal-title">Изменить пароль</DialogTitle>
+                    <DialogActions sx={{display: "flex", flexDirection: "column", gap: "1em"}}>
+                        <TextField autoFocus required size="small" name="password" type="password" placeholder="Пароль"/>
+                        <Button variant="outlined" type="submit">Сохранить</Button>
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
             <Button variant="text" sx={{marginTop: "1em", "color": "#0358d8"}}>Удаление аккаунта</Button>
         </div>
     );

@@ -1,18 +1,19 @@
 "use client";
 
-import React, {useEffect} from 'react';
+import React from 'react';
 import Header from "@/components/Header/Header";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import {Chip, FormControl, FormControlLabel, Menu, Radio, RadioGroup} from "@mui/material";
+import {Chip, Divider, FormControl, FormControlLabel, Menu, Radio, RadioGroup} from "@mui/material";
 import Button from "@mui/material/Button";
-import {useAuthStore} from "@/store/store";
+import {useAuthStore} from "@/stores/auth";
+import ResumeCardList from "@/components/ResumeCardList/ResumeCardList";
 import {useRouter} from "next/navigation";
-import VacancyCardList from "@/components/VacncyCardList/VacancyCardList";
+import Footer from "@/components/Footer/Footer";
 
 const ResumePage = () => {
-    const {user, checkAuth, updateUser} = useAuthStore()
+    const {user, updateUser} = useAuthStore()
     const { push } = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -23,12 +24,6 @@ const ResumePage = () => {
         setAnchorEl(null);
     };
 
-    useEffect(
-        () => {
-            checkAuth().then(r => r ? null : push("/login"))
-        },
-        []
-    )
 
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         user.search_status = event.target.value;
@@ -40,16 +35,16 @@ const ResumePage = () => {
         <>
             <Header isMain={false}/>
             <Container maxWidth="lg">
-                <Container maxWidth="md" sx={{marginTop: "3em"}}>
+                <Box maxWidth="md" sx={{marginTop: "3em"}}>
                     <Box sx={{display: "flex", alignItems: "center", justifyContent: "space-between",}}>
                         <Typography variant="h4" sx={{fontWeight: 600}}>
                             Мои резюме
                         </Typography>
-                        <Box sx={{display: "flex", alignItems: "center"}}>
-                            <Button variant="outlined" sx={{marginRight: "1em"}}>
+                        <Box sx={{display: "flex", alignItems: "center", gap: "10px"}}>
+                            <Button variant="outlined">
                                 Заказать резюме
                             </Button>
-                            <Button variant="outlined">
+                            <Button variant="outlined" onClick={() => push('/resume/create/initial')}>
                                 Создать резюме
                             </Button>
                         </Box>
@@ -75,10 +70,7 @@ const ResumePage = () => {
                                 marginLeft: "1em"
                             }}
                         />
-                        <Typography
-                            variant="body1"
-                            sx={{marginRight: "3em"}}
-                        >
+                        <Typography variant="body1" sx={{marginRight: "3em"}}>
                             {user.search_status}
                         </Typography>
                         <Button
@@ -120,9 +112,13 @@ const ResumePage = () => {
                             </Box>
                         </Menu>
                     </Box>
-                    <VacancyCardList/>
-                </Container>
+                    <ResumeCardList/>
+                </Box>
             </Container>
+            <Container maxWidth="lg" sx={{marginTop: "4em"}}>
+                <Divider/>
+            </Container>
+            <Footer/>
         </>
     );
 };

@@ -1,12 +1,17 @@
-import React from 'react';
-import Typography from "@mui/material/Typography";
+import React, {FC} from 'react';
 import Box from "@mui/material/Box";
 
-const Message = ({children}) => {
+
+interface MessageProps {
+    children: React.ReactNode
+}
+
+
+const Message: FC<MessageProps> = (props) => {
     return (
         <Box
             sx={{
-                backgroundColor: "#c0c0c0",
+                backgroundColor: "#e5e8ec",
                 borderRadius: "0 16px 16px",
                 padding: "16px",
                 flexGrow: 1,
@@ -14,8 +19,7 @@ const Message = ({children}) => {
                 marginTop: "16px",
                 marginBottom: "16px",
             }}>
-            {children}
-
+            {props.children}
         </Box>
     );
 };
